@@ -1,0 +1,49 @@
+
+div {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+ 
+  div input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+ 
+  div button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+  }
+  
+ 
+  table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+
+  table th {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    text-align: left;
+  }
+  
+ 
+  table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+  }
+  
+
+  table tr:nth-child(odd) {
+    background-color: #f2f2f2;
+  }
+  
