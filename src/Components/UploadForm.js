@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './UploadForm.css';
 
 function UploadForm() {
@@ -8,6 +7,9 @@ function UploadForm() {
   const [dept, setDept] = useState("");
   const [salary, setSalary] = useState(0);
   const [error, setError] = useState(null);
+  const [designation, setDesignation] = useState("");
+  const [gender, setGender] = useState("");
+  const [dob, setDob] = useState("");
 
   const [details, setDetails] = useState([]);
 
@@ -20,7 +22,8 @@ function UploadForm() {
     fetchData();
   },[details]);
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
+    
     e.preventDefault();
     try {
       const res = await fetch("http://localhost:8000/upload", {
@@ -31,18 +34,21 @@ function UploadForm() {
         body: JSON.stringify({
           id,
           name,
+          gender,
+          dob,
           dept,
+          designation,
           salary,
         }),
       });
       const data = await res.json();
-      if (data !== 'ok') {
-        setError(data.error);
+      if (data.res !== 'ok') {
+        setError(data.res);
         setTimeout(() => {
           setError(null)
-        }, 2000);
+        }, 3000);
       } else {
-        setDetails([...details, { "emp_id": id, "emp_name": name, "department": dept, "salary": salary }]); 
+        setDetails([...details, { "emp_id": id, "emp_name": name,"gender":gender, "dob":dob, "department": dept,"designation":designation, "salary": salary }]); 
       }
          
     } catch (err) {
@@ -90,15 +96,68 @@ function UploadForm() {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
+        <div className="gender">
+          <label >Gender</label>
+          <label>
+          <input
+            type="radio"
+            id="gender"
+            name="gender"
+            value="male"
+            checked={gender==="male"}
+            onChange={(e) => setGender(e.target.value)}
+            />
+            Male
+          </label>
+          <label>
+          <input
+            type="radio"
+            id="gender"
+            name="gender"
+            value="female"
+            checked={gender==="female"}
+            onChange={(e) => setGender(e.target.value)}
+            />
+            Female
+          </label>
+          <label>
+          <input
+            type="radio"
+            id="gender"
+            name="gender"
+            value="prefer not to say"
+            checked={gender==="prefer not to say"}
+            onChange={(e) => setGender(e.target.value)}
+            />
+            Prefer not to say
+            </label>
+        </div>
+        <div className="dob">
+          <label>Date Of Birth</label>
+          <input type="date"
+            value={dob}
+          onChange={(e)=>setDob(e.target.value)} />
+        </div>
         <div className="empdept">
           <label for="dept">Department</label>
+          <select id='dept' value={dept} onChange={e => setDept(e.target.value)}>
+            <option value="">Select...</option>
+            <option value="finance">Finance</option>
+            <option value="marketing">Marketing</option>
+            <option value="advertizement">Advertisement</option>
+            <option value="sales">Sales</option>
+            <option value="production">Production</option>
+          </select>
+        </div>
+        <div className="emdDesig">
+          <label for="desig">Designation</label>
           <input
             type="text"
-            id="dept"
-            value={dept}
-            onChange={(e) => setDept(e.target.value)}
+            id="desig"
+            value={designation}
+            onChange={(e) => setDesignation(e.target.value)}
           />
-        </div>
+          </div>
         <div className="empsalary">
           <label for="salary">Employee Salary</label>
           <input
@@ -119,9 +178,13 @@ function UploadForm() {
       <table>
         <thead>
           <tr>
+          
             <td>EmployeeId</td>
             <td>EmployeeName</td>
+            <td>Gender</td>
+            <td>DOB</td>
             <td>Department</td>
+            <td>Designation</td>
             <td>Salary</td>
             <td></td>
           </tr>
@@ -130,9 +193,13 @@ function UploadForm() {
           {details.map((detail, index) => {
             return (
               <tr key={index}>
+                 {/* { "emp_id": id, "emp_name": name,"gender":gender, "dob":dob, "department": dept,"designation":designation, "salary": salary } */}
                 <td>{detail.emp_id}</td>
                 <td>{detail.emp_name}</td>
+                <td>{detail.gender}</td>
+                <td>{detail.dob}</td>
                 <td>{detail.department}</td>
+                <td>{detail.desigantion}</td>
                 <td>{detail.salary}</td>
                 <td><button onClick={()=>handleDelete(index)}>Delete</button></td>
               </tr>
