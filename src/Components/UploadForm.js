@@ -10,6 +10,8 @@ function UploadForm() {
   const [designation, setDesignation] = useState("");
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState("");
+  const [phoneno, setPhoneno] = useState();
+  const [nextpage, setNextpage] = useState(false);
 
   const [details, setDetails] = useState([]);
 
@@ -22,9 +24,46 @@ function UploadForm() {
     fetchData();
   },[details]);
 
-  const handleSubmit = async (e) => {
+  const updateB = async () => {
     
+    
+    try {
+      const res = await fetch("http://localhost:8000/update", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          name,
+          gender,
+          dob,
+          dept,
+          designation,
+          salary,
+          phoneno,
+          
+        }),
+      });
+      const data = await res.json();
+      if (data.res !== 'ok') {
+        setError(data.res);
+        setTimeout(() => {
+          setError(null)
+        }, 3000);
+      } else {
+        setDetails([...details, { "emp_id": id, "emp_name": name,"gender":gender, "dob":dob, "department": dept,"designation":designation, "salary": salary }]); 
+      }
+      setNextpage(false);
+         
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
       const res = await fetch("http://localhost:8000/upload", {
         method: "POST",
@@ -39,6 +78,7 @@ function UploadForm() {
           dept,
           designation,
           salary,
+          
         }),
       });
       const data = await res.json();
@@ -47,9 +87,8 @@ function UploadForm() {
         setTimeout(() => {
           setError(null)
         }, 3000);
-      } else {
-        setDetails([...details, { "emp_id": id, "emp_name": name,"gender":gender, "dob":dob, "department": dept,"designation":designation, "salary": salary }]); 
-      }
+      } 
+      setNextpage(true);
          
     } catch (err) {
       console.log(err);
@@ -167,9 +206,21 @@ function UploadForm() {
             onChange={(e) => setSalary(e.target.value)}
           />
         </div>
-        <div>
-          <button type="submit">Add Details</button>
-        </div>
+        {nextpage ?  <div className="phoneno">
+          <label for="phoneno">Phone no</label>
+          <input
+            type="text"
+            id="phoneno"
+            value={phoneno}
+            onChange={(e) => setPhoneno(e.target.value)}
+          /></div> : null}
+        
+        {nextpage ? <div>
+          <button  onClick={()=>updateB()}>Update</button>
+        </div>:null}
+        {!nextpage?<div>
+          <button onClick={(e)=>handleSubmit(e)}>Add more Details</button>
+        </div>:null}
         <div>
         {error && <label>{error}</label>}
         </div>
@@ -186,6 +237,8 @@ function UploadForm() {
             <td>Department</td>
             <td>Designation</td>
             <td>Salary</td>
+            <td>Phoneno</td>
+            <td></td>
             <td></td>
           </tr>
         </thead>
@@ -201,6 +254,8 @@ function UploadForm() {
                 <td>{detail.department}</td>
                 <td>{detail.desigantion}</td>
                 <td>{detail.salary}</td>
+                <td>{detail.phoneno}</td>
+                {/* <td><button onClick={ ()=>handleTask(index)}>Add Task</button></td> */}
                 <td><button onClick={()=>handleDelete(index)}>Delete</button></td>
               </tr>
             );
